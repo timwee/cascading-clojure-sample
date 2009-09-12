@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.clojure</groupId>
+    <artifactId>clojure-pom</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  <groupId>cascading.clojure</groupId>
+  <artifactId>sample</artifactId>
+  <name>sample the sauce</name>
+  <version>1.0</version>
+  <build>
+    <plugins>
+	  <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>
+                ${project.build.directory}/lib
+              </outputDirectory>
+              <includeScope>runtime</includeScope>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <configuration>
+              <tasks>
+                <java fork="true"
+                      classname="clojure.lang.Compile"
+                      classpathref="maven.compile.classpath">
+                  <sysproperty key="clojure.compile.path"
+                               value="${project.build.outputDirectory}" />
+		  <arg value="cascading.clojure.boot"/>
+		  <arg value="cascading.clojure.sample"/>
+                </java>
+              </tasks>
+            </configuration>
+          </execution>
+  
+		
+	   <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              	 <tasks>
+	                <property name="main.class" value="cascading.clojure.boot"/>
+	                <property name="artifacts.dir" location="${project.build.directory}"/>
+	                <property name="build.classes" location="${project.build.directory}/classes"/>
+	                <property name="output.dir" location="build"/>
+	                <delete dir="${output.dir}"/>
+	                <mkdir dir="${output.dir}"/>
+	                <jar jarfile="${output.dir}/jobs.jar" filesetmanifest="mergewithoutmain">
+	                  <fileset dir="${project.build.directory}" includes="lib/">
+	                    <exclude name="**/hadoop*.jar" />
+	                  </fileset>
+	                  <fileset dir="${build.classes}">
+			    <exclude name="**/*.clj" />
+			  </fileset>
+			  <fileset dir="conf">
+	                    <include name="config.properties" />
+	                  </fileset>
+	                  <manifest>
+	                    <attribute name="Class-Path" value="."/>
+	                    <attribute name="Main-Class" value="${main.class}"/>
+	                  </manifest>
+	                </jar>
+
+	              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+
+    <dependency>
+      <groupId>org.clojure</groupId>
+      <artifactId>clojure-contrib</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.flightcaster</groupId>
+      <artifactId>cascading-clojure</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+</project>
