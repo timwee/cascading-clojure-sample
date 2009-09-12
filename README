@@ -1,6 +1,6 @@
 mvn install (dependencies install using timD's stuff http://github.com/dysinger )
 
-start up hadoop 0.20
+start up hadoop 0.20 (follow this guide for setup after git clone for timD http://hadoop.apache.org/common/docs/r0.20.0/quickstart.html )
 
 
 hadoop jar build/jobs.jar -in file:///Users/Admin/projects/cascading-clojure-sample/data/ -out file:///Users/Admin/projects/cascading-clojure-sample/out/ -ns cascading.clojure.sample -wf test-with-fields
